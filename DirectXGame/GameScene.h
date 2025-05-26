@@ -2,6 +2,7 @@
 #include"KamataEngine.h"
 #include"player.h"
 #include"vector"
+#include"skydome.h"
 
 class GameScene {
 public:
@@ -20,9 +21,13 @@ public:
 	//スプライト
 	KamataEngine::Model* model_ = nullptr;
 
+	KamataEngine::Model* modelSkydome_ = nullptr;
+
 	KamataEngine::Camera camera_;
 
 	Player* player_ = nullptr;
+
+	skydome* skydome_ = nullptr;
 
 	bool isDebugCameraActive_ = false;
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;
