@@ -22,8 +22,9 @@ void GameScene::Initialize() {
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("uvChecker.png");
 	// スプライトインスタンスの生成
-	model_ = Model::Create();
+	model_ = Model::CreateFromOBJ("block",true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	
 
 	debugCamera_ = new DebugCamera(1280, 720);
 
