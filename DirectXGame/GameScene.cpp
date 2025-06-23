@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "MyMath.h"
 
+
 using namespace KamataEngine;
 
 // デストラクタ
@@ -15,6 +16,7 @@ GameScene::~GameScene() {
 	}
 	worldTransformBlocks_.clear();
 	delete debugCamera_;
+	delete mapChipField_;
 }
 
 // 初期化処理
@@ -28,29 +30,11 @@ void GameScene::Initialize() {
 
 	debugCamera_ = new DebugCamera(1280, 720);
 
-	const uint32_t kNumBlockVirtical = 10;
-	const uint32_t kNumBlockHorizon = 20;
+	
+	mapChipField_ = new MapChipField;
+	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 
-	const float kBlockWidth = 2.0f;
-	const float kBlockheight = 2.0f;
-
-	worldTransformBlocks_.resize(kNumBlockVirtical);
-
-	for (uint32_t i = 0; i < kNumBlockVirtical; i++) {
-
-		worldTransformBlocks_[i].resize(kNumBlockHorizon);
-	}
-	for (uint32_t i = 0; i < kNumBlockVirtical; i++) {
-		for (uint32_t j = 0; j < kNumBlockHorizon; j++) {
-			if ((i + j) % 2 == 0) {
-				continue;
-			}
-			worldTransformBlocks_[i][j] = new WorldTransform();
-			worldTransformBlocks_[i][j]->Initialize();
-			worldTransformBlocks_[i][j]->translation_.x = kBlockWidth * j;
-			worldTransformBlocks_[i][j]->translation_.y = kBlockheight * i;
-		}
-	}
+	GenerateBlocks();
 
 	camera_.Initialize();
 
@@ -119,4 +103,31 @@ void GameScene::Draw() {
 
 	// スプライト描画後処理
 	Model::PostDraw();
+}
+
+void GameScene::GenerateBlocks() {
+	const uint32_t kNumBlockVirtical = mapChipField_->GetNumBlockVerirtical();
+	const uint32_t kNumBlockHorizon = mapChipField_->GetNumBlockHorizontal();
+
+	//const float kBlockWidth = 2.0f;
+	//const float kBlockheight = 2.0f;
+
+	worldTransformBlocks_.resize(kNumBlockVirtical);
+
+	for (uint32_t i = 0; i < kNumBlockVirtical; i++) {
+
+		worldTransformBlocks_[i].resize(kNumBlockHorizon);
+	}
+	for (uint32_t i = 0; i < kNumBlockVirtical; ++i) {
+		for (uint32_t j = 0; j < kNumBlockHorizon; ++j) {
+			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) {
+				WorldTransform* worldTransform = new WorldTransform();
+				worldTransform->Initialize();
+				worldTransformBlocks_[i][j] = worldTransform;
+				worldTransform->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+			}
+		}
+	}
+
+
 }
