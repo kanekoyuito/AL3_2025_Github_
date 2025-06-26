@@ -34,6 +34,7 @@ private:
 
 	float turnFirstRotationY_ = 0.0f;
 
+
 	float turnTimer_ = 0.0f;
 
 	static inline const float kTimeTurn = 0.3f;
@@ -44,5 +45,5 @@ private:
 
 	static inline const float kLimitFallSpeed = 1.0f;
 
-	static inline const float kJumpAcceleration = 2.0f;
+	static inline const float kJumpAcceleration = .0f;
 };
