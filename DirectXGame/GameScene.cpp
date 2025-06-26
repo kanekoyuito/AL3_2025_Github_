@@ -26,7 +26,8 @@ void GameScene::Initialize() {
 	// スプライトインスタンスの生成
 	model_ = Model::CreateFromOBJ("block",true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
-	
+
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
 
 	debugCamera_ = new DebugCamera(1280, 720);
 
@@ -43,8 +44,10 @@ void GameScene::Initialize() {
 
 	skydome_ = new skydome();
 
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+
 	// 自キャラの初期化
-	player_->Initialize(model_, textureHandle_, &camera_);
+	player_->Initialize(modelPlayer_, &camera_,playerPosition);
 	// 背景
 	skydome_->Initialize(modelSkydome_, textureHandle_, &camera_);
 }
