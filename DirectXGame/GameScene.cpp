@@ -44,12 +44,23 @@ void GameScene::Initialize() {
 
 	skydome_ = new skydome();
 
+	cameraController_ = new CameraController();
+
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 
 	// 自キャラの初期化
 	player_->Initialize(modelPlayer_, &camera_,playerPosition);
 	// 背景
 	skydome_->Initialize(modelSkydome_, textureHandle_, &camera_);
+
+	cameraController_->Initialize();
+
+	cameraController_->SetTarget(player_);
+
+	cameraController_->Reset();
+    
+	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
+	cameraController_->SetMovableArea(cameraArea);
 }
 
 // 更新処理
@@ -77,8 +88,13 @@ void GameScene::Update() {
 		camera_.matView = debugCamera_->GetCamera().matView;
 		camera_.TransferMatrix();
 	} else {
-		camera_.UpdateMatrix();
+		///*camera_.UpdateMatrix();*/
+		camera_.matView = cameraController_->GetViewProjection().matView;
+		camera_.matProjection = cameraController_->GetViewProjection().matProjection;
+		//
+		camera_.TransferMatrix();
 	}
+	cameraController_->Update();
 }
 
 // 描画処理

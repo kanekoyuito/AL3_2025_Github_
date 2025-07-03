@@ -10,4 +10,4 @@ void skydome::Initialize(KamataEngine::Model* model, uint32_t textureHandle, Kam
 
 void skydome::Update() {}
 
-void skydome::Draw() { model_->Draw(worldTransform_, *camera_); }
+void skydome::Draw() {model_->Draw(worldTransform_, *camera_); }

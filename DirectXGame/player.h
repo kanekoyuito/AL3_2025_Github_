@@ -10,15 +10,19 @@ public:
 
 	void Draw();
 
+	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
+
+	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
+
 private:
 	// スプライト
 	KamataEngine::Model* model_ = nullptr;
 
-	KamataEngine::WorldTransform worldTransform_;
-
 	KamataEngine::Camera* camera_ = nullptr;
 
 	KamataEngine::Vector3 velocity_ = {};
+
+	KamataEngine::WorldTransform worldTransform_;
 
 	static inline const float kAcceleration = 0.1f;
 
@@ -46,4 +50,6 @@ private:
 	static inline const float kLimitFallSpeed = 1.0f;
 
 	static inline const float kJumpAcceleration = .0f;
+
+	
 };
