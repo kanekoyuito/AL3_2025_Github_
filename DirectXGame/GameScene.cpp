@@ -37,10 +37,16 @@ void GameScene::Initialize() {
 
 	GenerateBlocks();
 
+	//カメラの初期化
 	camera_.Initialize();
 
 	// 自キャラにの生成
 	player_ = new Player();
+
+	mapChipField_ = new MapChipField;
+	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
+	GenerateBlocks();
+	player_->SetMapChipField(mapChipField_);
 
 	skydome_ = new skydome();
 
