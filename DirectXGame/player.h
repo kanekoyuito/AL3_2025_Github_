@@ -11,13 +11,7 @@ public:
 		kRight,
 		kLeft,
 	};
-	enum Corner {
-		kRightBottom, 
-		kLeftBottom, 
-		kRightTop, 
-		kLeftTop, 
-		kNumCorner 
-	};
+	
 	/*void Initialize(KamataEngine::Model* model,uint32_t textureHandle,KamataEngine::Camera* camera);*/
 	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, const KamataEngine::Vector3& position);
 
@@ -29,7 +23,7 @@ public:
 
 	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
 
-	void SetmapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
+	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
 private:
 	// スプライト
@@ -43,8 +37,6 @@ private:
 	KamataEngine::Vector3 velocity_ = {};
 
 	KamataEngine::WorldTransform worldTransform_;
-
-	MapChipField* mapChipField_ = nullptr;
 
 	static inline const float kAcceleration = 0.1f;
 
@@ -67,7 +59,7 @@ private:
 
 	static inline const float kLimitFallSpeed = 1.0f;
 
-	static inline const float kJumpAcceleration = .0f;
+	static inline const float kJumpAcceleration = 0.7f;
 
 	//キャラクターの当たり判定サイズ
 	static inline const float kWidth = 0.8f;
@@ -75,21 +67,31 @@ private:
 
 	static inline const float kBlank = 0.04f;
 
-	void InputMove();
-
-		struct CollisionMapInfo {
+	struct CollisionMapInfo {
 		bool ceiling = false;
 		bool landing = false;
 		bool hitWall = false;
-		Vector3 move;
+		KamataEngine::Vector3 move;
 	};
-	    //
-	    void CheckMapCollision(CollisionMapInfo& info);
-	    //
-	    void CheckMapCollisionUp(CollisionMapInfo& info);
-	    void CheckMapCollisionDown(CollisionMapInfo& info);
-	    void CheckMapCollisionRight(CollisionMapInfo& info);
-	    void CheckMapCollisionLeft(CollisionMapInfo& info);
-	    //
-	    Vector3 CornerPosition(const Vector3& center, Corner corner);
+
+	void InputMove();
+
+	void CheckMapCollision(CollisionMapInfo& info);
+
+	void CheckMapCollisionUp(CollisionMapInfo& info);
+	
+	void AnimateTurn();
+
+	//角
+	enum Corner { 
+		kRightBottom, 
+		kLeftBottom, 
+		kRightTop,
+		kLeftTop, 
+		
+		kNumCorner 
+	};
+
+	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
+
 };
