@@ -137,7 +137,6 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 	MapChipField::IndexSet IndexSet;
 	IndexSet = mapChipField_->GetMapChipIndexByPosition(positionsNew[kLeftTop]);
 	mapChipType = mapChipField_->GetMapChipPositionByIndex(IndexSet.xIndex, IndexSet.yIndex);
-
 }
 
 void Player::AnimateTurn() {
