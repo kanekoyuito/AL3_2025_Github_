@@ -4,6 +4,7 @@
 #include "numbers"
 #define NOMINMAX
 #include "algorithm"
+#include"MapChipField.h"
 
 using namespace KamataEngine;
 
@@ -128,6 +129,15 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 	for (uint32_t i = 0; i < positionsNew.size(); ++i) {
 		positionsNew[i] = CornerPosition(worldTransform_.translation_ + info.move, static_cast<Corner>(i));
 	}
+
+	MapChipType mapChipType;
+
+	bool hit = false;
+
+	MapChipField::IndexSet IndexSet;
+	IndexSet = mapChipField_->GetMapChipIndexByPosition(positionsNew[kLeftTop]);
+	mapChipType = mapChipField_->GetMapChipPositionByIndex(IndexSet.xIndex, IndexSet.yIndex);
+
 }
 
 void Player::AnimateTurn() {

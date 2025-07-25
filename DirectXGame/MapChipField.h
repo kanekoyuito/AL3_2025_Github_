@@ -21,8 +21,12 @@ public:
 	static inline const uint32_t kNumBlockHorizontal = 100;
 
 	MapChipData mapChipData_;
+
+	
 	void ResetMapChipData();
 	void LoadMapChipCsv(const std::string& filePath);
+
+	
 
 	MapChipType GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex);
 
@@ -30,6 +34,14 @@ public:
 
 	uint32_t GetNumBlockVerirtical() const { return kNumBlockVirtical; }
 	uint32_t GetNumBlockHorizontal() const { return kNumBlockHorizontal; }
+
+	struct IndexSet {
+		uint32_t xIndex;
+		uint32_t yIndex;
+	};
+
+	IndexSet GetMapChipIndexByPosition(const KamataEngine::Vector3& position);
+
 
 };
 
