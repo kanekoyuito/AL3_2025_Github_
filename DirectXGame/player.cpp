@@ -32,6 +32,8 @@ void Player::Update() {
 
 	CheckMapMove(collisionMapInfo);
 
+	CheckMapCeiling(collisionMapInfo);
+
 	bool landing = false;
 
 	if (velocity_.y < 0) {
@@ -138,6 +140,17 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 	/*mapChipType = mapChipField_->GetMapChipPositionByIndex(IndexSet.xIndex, IndexSet.yIndex);*/
 	mapChipType = mapChipField_->GetMapChipTypeByIndex(IndexSet.xIndex, IndexSet.yIndex);
 
+	if (mapChipType == MapChipType::kBlock) {
+		hit = true;
+	}
+
+	IndexSet = mapChipField_->GetMapChipIndexByPosition(positionsNew[kRightTop]);
+	mapChipType = mapChipField_->GetMapChipTypeByIndex(IndexSet.xIndex, IndexSet.yIndex);
+	if (mapChipType == MapChipType::kBlock) {
+		hit = true;
+	}
+
+
 	if (hit) {
 
 		IndexSet = mapChipField_->GetMapChipIndexByPosition(worldTransform_.translation_ + info.move + KamataEngine::Vector3(0,+kHeight / 2.0f,0));
@@ -147,20 +160,23 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 
 		info.ceiling = true;
 	}
-
-
-
-
-
-
-
-
 }
 
 void Player::CheckMapMove(const CollisionMapInfo& info) {
 
 
 	worldTransform_.translation_ += info.move;
+
+}
+
+void Player::CheckMapCeiling(const CollisionMapInfo& info) {
+
+	if (info.ceiling) {
+		DebugText::GetInstance()->ConsolePrintf("hit Ceiling\n");
+		velocity_.y = 0;
+	}
+
+
 
 }
 

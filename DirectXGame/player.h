@@ -59,7 +59,7 @@ private:
 
 	static inline const float kLimitFallSpeed = 1.0f;
 
-	static inline const float kJumpAcceleration = 2.0f;
+	static inline const float kJumpAcceleration = 1.0f;
 
 	//キャラクターの当たり判定サイズ
 	static inline const float kWidth = 0.8f;
@@ -79,6 +79,8 @@ private:
 	void CheckMapCollisionUp(CollisionMapInfo& info);
 	
 	void CheckMapMove(const CollisionMapInfo& info);
+
+	void CheckMapCeiling(const CollisionMapInfo& info);
 
 	void AnimateTurn();
 
