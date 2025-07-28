@@ -30,8 +30,7 @@ void Player::Update() {
 
 	CheckMapCollision(collisionMapInfo);
 
-	// 移動
-	worldTransform_.translation_ += velocity_;
+	CheckMapMove(collisionMapInfo);
 
 	bool landing = false;
 
@@ -144,9 +143,9 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 		IndexSet = mapChipField_->GetMapChipIndexByPosition(worldTransform_.translation_ + info.move + KamataEngine::Vector3(0,+kHeight / 2.0f,0));
 
 		MapChipField::Rect rect = mapChipField_->GetRectByIndex(IndexSet.xIndex,IndexSet.yIndex);
-		info.move.y = std::max(0.0f, rect.bottom - worldTransform_.translation_.y - (kHeight /2.0f + kBlank));
+		info.move.y = max(0.0f, rect.bottom - worldTransform_.translation_.y - (kHeight /2.0f + kBlank));
 
-
+		info.ceiling = true;
 	}
 
 
@@ -155,6 +154,13 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 
 
 
+
+}
+
+void Player::CheckMapMove(const CollisionMapInfo& info) {
+
+
+	worldTransform_.translation_ += info.move;
 
 }
 
