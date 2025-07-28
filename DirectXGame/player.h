@@ -94,4 +94,6 @@ private:
 
 	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
 
+	static inline const float kBlank = 0.1f;
+
 };

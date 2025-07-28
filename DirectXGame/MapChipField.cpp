@@ -1,7 +1,7 @@
 #include "MapChipField.h"
+#include "fstream"
 #include "map"
-#include"fstream"
-#include"sstream"
+#include "sstream"
 
 namespace {
 std::map<std::string, MapChipType> mapChipTable = {
@@ -10,15 +10,16 @@ std::map<std::string, MapChipType> mapChipTable = {
 };
 }
 
-void MapChipField::ResetMapChipData() { mapChipData_.data.clear();
+void MapChipField::ResetMapChipData() {
+	mapChipData_.data.clear();
 	mapChipData_.data.resize(kNumBlockVirtical);
 	for (std::vector<MapChipType>& mapChipDataLine : mapChipData_.data) {
 		mapChipDataLine.resize(kNumBlockHorizontal);
 	}
 }
 
-void MapChipField::LoadMapChipCsv(const std::string& filePath) { 
-	ResetMapChipData(); 
+void MapChipField::LoadMapChipCsv(const std::string& filePath) {
+	ResetMapChipData();
 
 	std::ifstream file;
 	file.open(filePath);
@@ -44,22 +45,17 @@ void MapChipField::LoadMapChipCsv(const std::string& filePath) {
 				mapChipData_.data[i][j] = mapChipTable[word];
 			}
 		}
-	}		
+	}
 }
 
 MapChipType MapChipField::GetMapChipTypeByIndex(uint32_t xIndex, uint32_t yIndex) {
 
-
-	if (xIndex < 0 || kNumBlockHorizontal -1 < xIndex) {
+	if (xIndex < 0 || kNumBlockHorizontal - 1 < xIndex) {
 		return MapChipType::kBlank;
 	}
 	if (yIndex < 0 || kNumBlockVirtical - 1 < yIndex) {
 		return MapChipType::kBlank;
 	}
-
-
-
-
 
 	return mapChipData_.data[yIndex][xIndex];
 }
@@ -72,4 +68,16 @@ MapChipField::IndexSet MapChipField::GetMapChipIndexByPosition(const KamataEngin
 	IndexSet.xIndex = static_cast<uint32_t>((position.x + kBlockWidth / 2) / kBlockWidth);
 	IndexSet.yIndex = kNumBlockVirtical - 1 - static_cast<uint32_t>((position.y + kBlockHeight / 2) / kBlockHeight);
 	return IndexSet;
+}
+MapChipField::Rect MapChipField::GetRectByIndex(uint32_t xIndex, uint32_t yIndex) {
+
+	KamataEngine::Vector3 center = GetMapChipPositionByIndex(xIndex, yIndex);
+
+	Rect rect;
+	rect.left = center.x - kBlockWidth / 2.0f;
+	rect.right = center.x + kBlockWidth / 2.0f;
+	rect.bottom = center.y - kBlockHeight / 2.0f;
+	rect.top = center.y + kBlockWidth / 2.0f;
+
+	return rect;
 };

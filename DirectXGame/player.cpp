@@ -136,7 +136,26 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 
 	MapChipField::IndexSet IndexSet;
 	IndexSet = mapChipField_->GetMapChipIndexByPosition(positionsNew[kLeftTop]);
-	mapChipType = mapChipField_->GetMapChipPositionByIndex(IndexSet.xIndex, IndexSet.yIndex);
+	/*mapChipType = mapChipField_->GetMapChipPositionByIndex(IndexSet.xIndex, IndexSet.yIndex);*/
+	mapChipType = mapChipField_->GetMapChipTypeByIndex(IndexSet.xIndex, IndexSet.yIndex);
+
+	if (hit) {
+
+		IndexSet = mapChipField_->GetMapChipIndexByPosition(worldTransform_.translation_ + info.move + KamataEngine::Vector3(0,+kHeight / 2.0f,0));
+
+		MapChipField::Rect rect = mapChipField_->GetRectByIndex(IndexSet.xIndex,IndexSet.yIndex);
+		info.move.y = std::max(0.0f, rect.bottom - worldTransform_.translation_.y - (kHeight /2.0f + kBlank));
+
+
+	}
+
+
+
+
+
+
+
+
 }
 
 void Player::AnimateTurn() {
