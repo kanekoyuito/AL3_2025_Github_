@@ -5,6 +5,7 @@
 #include"skydome.h"
 #include"MapChipField.h"
 #include"CameraController.h"
+#include"Enemy.h"
 
 class GameScene {
 public:
@@ -30,13 +31,15 @@ public:
 
 	KamataEngine::Model* modelPlayer_ = nullptr;
 
-	KamataEngine::Camera camera_;
-
 	KamataEngine::Model* modelEnemy_ = nullptr;
+
+	KamataEngine::Camera camera_;
 
 	MapChipField* mapChipField_;
 
 	Player* player_ = nullptr;
+
+	Enemy* enemy_ = nullptr;
 
 	skydome* skydome_ = nullptr;
 

@@ -1,7 +1,6 @@
 #include "GameScene.h"
 #include "MyMath.h"
 
-
 using namespace KamataEngine;
 
 // デストラクタ
@@ -25,7 +24,7 @@ void GameScene::Initialize() {
 	// ファイル名を指定してテクスチャを読み込む
 	textureHandle_ = TextureManager::Load("uvChecker.png");
 	// スプライトインスタンスの生成
-	model_ = Model::CreateFromOBJ("block",true);
+	model_ = Model::CreateFromOBJ("block", true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
@@ -39,11 +38,14 @@ void GameScene::Initialize() {
 
 	GenerateBlocks();
 
-	//カメラの初期化
+	// カメラの初期化
 	camera_.Initialize();
 
 	// 自キャラにの生成
 	player_ = new Player();
+
+	// 　敵キャラの生成
+	enemy_ = new Enemy();
 
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
@@ -56,8 +58,14 @@ void GameScene::Initialize() {
 
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 
+	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(20,18);
+
 	// 自キャラの初期化
-	player_->Initialize(modelPlayer_, &camera_,playerPosition);
+	player_->Initialize(modelPlayer_, &camera_, playerPosition);
+
+	// 敵キャラの初期化
+	enemy_->Initialize(modelEnemy_,&camera_,enemyPosition);
+
 	// 背景
 	skydome_->Initialize(modelSkydome_, textureHandle_, &camera_);
 
@@ -66,7 +74,7 @@ void GameScene::Initialize() {
 	cameraController_->SetTarget(player_);
 
 	cameraController_->Reset();
-    
+
 	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
 	cameraController_->SetMovableArea(cameraArea);
 }
@@ -75,6 +83,8 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
+
+	enemy_->Update();
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			if (!worldTransformBlock) {
@@ -125,8 +135,10 @@ void GameScene::Draw() {
 	}
 	// 自キャラの描画
 	player_->Draw();
-
+	//背景の描画
 	skydome_->Draw();
+	//敵の描画
+	enemy_->Draw();
 
 	// スプライト描画後処理
 	Model::PostDraw();
@@ -136,8 +148,8 @@ void GameScene::GenerateBlocks() {
 	const uint32_t kNumBlockVirtical = mapChipField_->GetNumBlockVerirtical();
 	const uint32_t kNumBlockHorizon = mapChipField_->GetNumBlockHorizontal();
 
-	//const float kBlockWidth = 2.0f;
-	//const float kBlockheight = 2.0f;
+	// const float kBlockWidth = 2.0f;
+	// const float kBlockheight = 2.0f;
 
 	worldTransformBlocks_.resize(kNumBlockVirtical);
 
@@ -155,6 +167,4 @@ void GameScene::GenerateBlocks() {
 			}
 		}
 	}
-
-
 }
