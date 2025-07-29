@@ -79,6 +79,10 @@ private:
 	void CheckMapCollisionUp(CollisionMapInfo& info);
 	//衝突判定　下
 	void CheckMapCollisionDown(CollisionMapInfo& info);
+	//衝突判定　右
+	void CheckMapCollisionRight(CollisionMapInfo& info);
+	//衝突判定　左
+	void CheckMapCollisionLeft(CollisionMapInfo& info);
 	
 	void CheckMapMove(const CollisionMapInfo& info);
 
@@ -86,7 +90,7 @@ private:
 
 	void CheckMapLanding(const CollisionMapInfo& info);
 
-
+	void CheckMapWall(const CollisionMapInfo& info);
 
 	void AnimateTurn();
 
@@ -105,4 +109,8 @@ private:
 	static inline const float kBlank = 0.1f;
 
 	static inline const float kAttenuationLanding = 0.5f;
+
+	static inline const float kGroundSearchHeight = 0.5f;
+
+	static inline const float kAttenuationWall = 0.5f;
 };
