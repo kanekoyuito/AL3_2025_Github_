@@ -157,6 +157,7 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 
 		IndexSet = mapChipField_->GetMapChipIndexByPosition(worldTransform_.translation_ + info.move + KamataEngine::Vector3(0, +kHeight / 2.0f, 0));
 		
+
 		MapChipField::IndexSet IndexSetNow;
 		IndexSetNow = mapChipField_->GetMapChipIndexByPosition(worldTransform_.translation_ + KamataEngine::Vector3(0, +kHeight / 2.0f, 0));
 		if (IndexSetNow.yIndex != IndexSet.yIndex) {
