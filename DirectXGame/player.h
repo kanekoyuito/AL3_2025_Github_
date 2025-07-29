@@ -1,7 +1,10 @@
 #pragma once
 #include "KamataEngine.h"
+#include "MyMath.h"
 
 class MapChipField;
+
+class Enemy;
 
 class Player {
 public:
@@ -25,6 +28,13 @@ public:
 
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
+	
+	AABB GetAABB();
+
+	KamataEngine::Vector3 GetWorldPosition();
+
+	void OnCollision(const Enemy* enemy);
+
 private:
 	// スプライト
 	KamataEngine::Model* model_ = nullptr;
@@ -47,7 +57,6 @@ private:
 	LRDirection lrDirection_ = LRDirection::kRight;
 
 	float turnFirstRotationY_ = 0.0f;
-
 
 	float turnTimer_ = 0.0f;
 
