@@ -36,31 +36,6 @@ void Player::Update() {
 
 	CheckMapLanding(collisionMapInfo);
 
-	/*bool landing = false;
-
-	if (velocity_.y < 0) {
-	    if (worldTransform_.translation_.y <= 1.0f) {
-	        landing = true;
-	    }
-	}
-
-	if (onGround_) {
-	    if (velocity_.y > 0.0f) {
-	        onGround_ = false;
-	    }
-	} else {
-	    if (landing) {
-	        worldTransform_.translation_.y = 1.0f;
-
-	        velocity_.x *= (1.0f - kAttenuation);
-
-	        velocity_.y = 0.0f;
-
-	        onGround_ = true;
-	    }
-	}*/
-
-	//
 	AnimateTurn();
 
 	worldTransform_.matWorld_ = MakeaffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
@@ -156,7 +131,6 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 	if (hit) {
 
 		IndexSet = mapChipField_->GetMapChipIndexByPosition(worldTransform_.translation_ + info.move + KamataEngine::Vector3(0, +kHeight / 2.0f, 0));
-		
 
 		MapChipField::IndexSet IndexSetNow;
 		IndexSetNow = mapChipField_->GetMapChipIndexByPosition(worldTransform_.translation_ + KamataEngine::Vector3(0, +kHeight / 2.0f, 0));

@@ -8,6 +8,7 @@ using namespace KamataEngine;
 GameScene::~GameScene() {
 	delete model_;
 	delete player_;
+	delete modelEnemy_;
 	delete modelSkydome_;
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockline : worldTransformBlocks_) {
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockline) {
@@ -31,7 +32,8 @@ void GameScene::Initialize() {
 
 	debugCamera_ = new DebugCamera(1280, 720);
 
-	
+	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 

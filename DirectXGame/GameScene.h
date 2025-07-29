@@ -32,7 +32,7 @@ public:
 
 	KamataEngine::Camera camera_;
 
-
+	KamataEngine::Model* modelEnemy_ = nullptr;
 
 	MapChipField* mapChipField_;
 
