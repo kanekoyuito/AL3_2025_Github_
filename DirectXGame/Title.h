@@ -17,6 +17,7 @@ public:
 
 private:
 	// 3Dモデル
+
 	KamataEngine::Model* model_ = nullptr;
 	KamataEngine::Model* modelPlayer_ = nullptr;
 	// カメラ
