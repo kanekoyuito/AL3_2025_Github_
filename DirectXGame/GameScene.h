@@ -11,6 +11,13 @@
 class GameScene {
 public:
 
+	enum class Phase {
+		kPlay,//ゲームプレイ
+		kDeath,//デス演出
+	};
+	//ゲームの現在フェーズ
+	Phase phase_;
+
 	~GameScene();
 
 	//初期化
@@ -27,6 +34,8 @@ public:
 
 	//すべての当たり判定を行う
 	void CheckAllCollisions();
+
+	void ChangePhase();
 
 	//スプライト
 	KamataEngine::Model* model_ = nullptr;
@@ -50,6 +59,11 @@ public:
 	skydome* skydome_ = nullptr;
 
 	CameraController* cameraController_ = nullptr; 
+	
+	//デスフラグのgetter
+	bool IsFinished() const { return finished_; }
+	// 終了フラグ
+	bool finished_ = false;
 
 	bool isDebugCameraActive_ = false;
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;

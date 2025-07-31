@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "MyMath.h"
+#include"player.h"
 
 using namespace KamataEngine;
 
@@ -43,11 +44,13 @@ void GameScene::Initialize() {
 
 	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
 
-	deathParticles_ = new DeathParticles;
-	deathParticles_->Initialize(modelParticles_, &camera_, playerPosition);
+	/*deathParticles_ = new DeathParticles;
+	deathParticles_->Initialize(modelParticles_, &camera_, playerPosition);*/
 
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
+	//ゲームプレイフェーズから開始
+	phase_ = Phase::kPlay;
 
 	GenerateBlocks();
 
@@ -108,6 +111,8 @@ void GameScene::Update() {
 	//すべての当たり判定を行う
 	CheckAllCollisions();
 
+	ChangePhase();
+
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine) {
 			if (!worldTransformBlock) {
@@ -143,6 +148,9 @@ void GameScene::Update() {
 	if (deathParticles_) {
 		deathParticles_->Update();
 	}
+	if (deathParticles_&&deathParticles_->IsFinished()) {
+		finished_ = true;
+	}
 }
 
 // 描画処理
@@ -163,8 +171,11 @@ void GameScene::Draw() {
 			model_->Draw(*worldTransformBlock, camera_);
 		}
 	}
-	// 自キャラの描画
-	player_->Draw();
+	//プレイヤーの表示kPlayの時表示
+	if (phase_ == Phase::kPlay) {
+		// 自キャラの描画
+		player_->Draw();
+	}
 	//背景の描画
 	skydome_->Draw();
 	//敵の描画
@@ -220,8 +231,36 @@ void GameScene::CheckAllCollisions() {
 		//AABB同士の交差判定
 		if (IsCollision(aabb1,aabb2)) {
 			player_->OnCollision(enemy);
+			
+
+
 			//ジャンプ開始(仮処理)
 			enemy->OnCollision(player_);
 		}
+	}
+}
+
+void GameScene::ChangePhase() {
+
+switch (phase_) {
+	case GameScene::Phase::kPlay:
+		// ゲームプレイフェーズの処理
+		if (player_->IsDead()) {
+			//死亡演出フェーズに切り替え
+			phase_ = Phase::kDeath;
+			//自キャラの座標を取得
+			const Vector3& deathParticlesPosition = player_->GetWorldPosition();
+
+			deathParticles_ = new DeathParticles;
+			//
+			deathParticles_->Initialize(modelParticles_, &camera_, deathParticlesPosition);
+		}
+		break;
+	case GameScene::Phase::kDeath:
+		// デス演出フェーズの処理
+		if (deathParticles_ && deathParticles_->IsFinished()) {
+			finished_ = true;
+		}
+		break;
 	}
 }
