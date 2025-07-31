@@ -14,6 +14,7 @@ void DeathParticles::Initialize(KamataEngine::Model* model, KamataEngine::Camera
 
 	for (WorldTransform& worldTransform : worldTransform_) {
 		worldTransform.Initialize();
+
 		worldTransform.translation_ = position;
 	}
 	camera_ = camera;
