@@ -1,6 +1,6 @@
 #include "GameScene.h"
 #include "MyMath.h"
-#include"player.h"
+#include "player.h"
 
 using namespace KamataEngine;
 
@@ -19,9 +19,10 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 	delete deathParticles_;
 	delete mapChipField_;
-	for (Enemy* enemy:enemies_) {
+	for (Enemy* enemy : enemies_) {
 		delete enemy;
 	}
+	delete fade_;
 }
 
 // 初期化処理
@@ -49,8 +50,8 @@ void GameScene::Initialize() {
 
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
-	//ゲームプレイフェーズから開始
-	phase_ = Phase::kPlay;
+	// ゲームプレイフェーズから開始
+	phase_ = Phase::kFadeIn;
 
 	GenerateBlocks();
 
@@ -70,7 +71,6 @@ void GameScene::Initialize() {
 		enemies_.push_back(newEnemy);
 	}
 
-
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
 	GenerateBlocks();
@@ -79,8 +79,6 @@ void GameScene::Initialize() {
 	skydome_ = new skydome();
 
 	cameraController_ = new CameraController();
-
-	
 
 	// 自キャラの初期化
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
@@ -99,6 +97,10 @@ void GameScene::Initialize() {
 
 	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
 	cameraController_->SetMovableArea(cameraArea);
+
+	fade_ = new Fade();
+	fade_->Initialize();
+	fade_->Start(Fade::Status::FadeIn, 1.0f);
 }
 
 // 更新処理
@@ -106,9 +108,11 @@ void GameScene::Update() {
 	// 自キャラの更新
 	player_->Update();
 
+	fade_->Update();
+
 	/*enemy_->Update();*/
 
-	//すべての当たり判定を行う
+	// すべての当たり判定を行う
 	CheckAllCollisions();
 
 	ChangePhase();
@@ -142,13 +146,13 @@ void GameScene::Update() {
 	}
 	cameraController_->Update();
 
-	for (Enemy* enemy:enemies_) {
+	for (Enemy* enemy : enemies_) {
 		enemy->Update();
 	}
 	if (deathParticles_) {
 		deathParticles_->Update();
 	}
-	if (deathParticles_&&deathParticles_->IsFinished()) {
+	if (deathParticles_ && deathParticles_->IsFinished()) {
 		finished_ = true;
 	}
 }
@@ -171,14 +175,14 @@ void GameScene::Draw() {
 			model_->Draw(*worldTransformBlock, camera_);
 		}
 	}
-	//プレイヤーの表示kPlayの時表示
+	// プレイヤーの表示kPlayの時表示
 	if (phase_ == Phase::kPlay) {
 		// 自キャラの描画
 		player_->Draw();
 	}
-	//背景の描画
+	// 背景の描画
 	skydome_->Draw();
-	//敵の描画
+	// 敵の描画
 	/*enemy_->Draw();*/
 
 	for (Enemy* enemy : enemies_) {
@@ -188,6 +192,7 @@ void GameScene::Draw() {
 		deathParticles_->Draw();
 	}
 
+	fade_->Draw();
 
 	// スプライト描画後処理
 	Model::PostDraw();
@@ -219,22 +224,20 @@ void GameScene::GenerateBlocks() {
 }
 
 void GameScene::CheckAllCollisions() {
-	//判定対象1と2の座標
+	// 判定対象1と2の座標
 	AABB aabb1, aabb2;
-	//自キャラの座標
+	// 自キャラの座標
 	aabb1 = player_->GetAABB();
-	//自キャラと敵弾全ての当たり判定
-	for (Enemy* enemy : enemies_ ) {
-		//敵弾の座標
+	// 自キャラと敵弾全ての当たり判定
+	for (Enemy* enemy : enemies_) {
+		// 敵弾の座標
 		aabb2 = enemy->GetAABB();
 
-		//AABB同士の交差判定
-		if (IsCollision(aabb1,aabb2)) {
+		// AABB同士の交差判定
+		if (IsCollision(aabb1, aabb2)) {
 			player_->OnCollision(enemy);
-			
 
-
-			//ジャンプ開始(仮処理)
+			// ジャンプ開始(仮処理)
 			enemy->OnCollision(player_);
 		}
 	}
@@ -242,13 +245,13 @@ void GameScene::CheckAllCollisions() {
 
 void GameScene::ChangePhase() {
 
-switch (phase_) {
+	switch (phase_) {
 	case GameScene::Phase::kPlay:
 		// ゲームプレイフェーズの処理
 		if (player_->IsDead()) {
-			//死亡演出フェーズに切り替え
+			// 死亡演出フェーズに切り替え
 			phase_ = Phase::kDeath;
-			//自キャラの座標を取得
+			// 自キャラの座標を取得
 			const Vector3& deathParticlesPosition = player_->GetWorldPosition();
 
 			deathParticles_ = new DeathParticles;

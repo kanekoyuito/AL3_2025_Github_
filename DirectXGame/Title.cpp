@@ -8,6 +8,8 @@ Title::~Title() {
 	// モデル
 	delete model_;
 	delete modelPlayer_;
+
+	delete fade_;
 }
 
 void Title::Initialize() {
@@ -28,9 +30,35 @@ void Title::Initialize() {
 	worldTransformPlayer_.scale_ = {10, 10, 10};
 	worldTransformPlayer_.translation_ = {0, -8, 0};
 	worldTransformPlayer_.rotation_.y = std::numbers::pi_v<float>;
+
+	fade_ = new Fade();
+	fade_->Initialize();
+	fade_->Start(Fade::Status::FadeIn, 1.0f);
 }
 
 void Title::Update() {
+
+	switch (phase_) {
+	case Phase::kMain:
+		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+			phase_ = Phase::kFadeOut;
+			fade_->Start(Fade::Status::FadeOut, 1.0f);
+		}
+		break;
+	case Phase::kFadeIn:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			phase_ = Phase::kMain;
+		}
+		break;
+	case Phase::kFadeOut:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			finished_ = true;
+		}
+
+	}
+
 	// アフィン変換行列の作成
 	worldTransform_.matWorld_ = MakeaffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	// 行列を定数バッファに転送
@@ -45,10 +73,7 @@ void Title::Update() {
 	// 行列を定数バッファに転送
 	worldTransformPlayer_.TransferMatrix();
 
-	// タイトルシーンの終了条件
-	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
-		finished_ = true;
-	}
+	
 }
 
 void Title::Draw() {
@@ -63,4 +88,5 @@ void Title::Draw() {
 	//3Dモデル描画語処理
 	Model::PostDraw();
 
+	fade_->Draw();
 }
