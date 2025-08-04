@@ -105,15 +105,49 @@ void GameScene::Initialize() {
 
 // 更新処理
 void GameScene::Update() {
-	// 自キャラの更新
-	player_->Update();
+
+	switch (phase_) {
+	case GameScene::Phase::kPlay:
+		// すべての当たり判定を行う
+		CheckAllCollisions();
+		if (player_->IsDead() == true) {
+			phase_ = Phase::kDeath;
+
+			const Vector3& deathParticlesPosition = player_->GetWorldPosition();
+
+			deathParticles_ = new DeathParticles;
+			//
+			deathParticles_->Initialize(modelParticles_, &camera_, deathParticlesPosition);
+		}
+		break;
+	case GameScene::Phase::kDeath:
+
+		deathParticles_->Update();
+
+		if (deathParticles_ && deathParticles_->IsFinished()) {
+			phase_ = Phase::kFadeout;
+			fade_->Start(Fade::Status::FadeOut, 1.0f);
+		}
+
+		break;
+	case GameScene::Phase::kFadeIn:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			phase_ = Phase::kPlay;
+		}
+		break;
+	case GameScene::Phase::kFadeout:
+		fade_->Update();
+		if (fade_->IsFinished()) {
+			finished_ = true;
+		}
+		break;
+	}
 
 	fade_->Update();
-
+	// 自キャラの更新
+	player_->Update();
 	/*enemy_->Update();*/
-
-	// すべての当たり判定を行う
-	CheckAllCollisions();
 
 	ChangePhase();
 
