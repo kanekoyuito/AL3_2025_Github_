@@ -72,8 +72,6 @@ void Title::Update() {
 	worldTransformPlayer_.matWorld_ = MakeaffineMatrix(worldTransformPlayer_.scale_, worldTransformPlayer_.rotation_, worldTransformPlayer_.translation_);
 	// 行列を定数バッファに転送
 	worldTransformPlayer_.TransferMatrix();
-
-	
 }
 
 void Title::Draw() {

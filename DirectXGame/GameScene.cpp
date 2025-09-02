@@ -186,9 +186,9 @@ void GameScene::Update() {
 	if (deathParticles_) {
 		deathParticles_->Update();
 	}
-	if (deathParticles_ && deathParticles_->IsFinished()) {
+	/*if (deathParticles_ && deathParticles_->IsFinished()) {
 		finished_ = true;
-	}
+	}*/
 }
 
 // 描画処理
