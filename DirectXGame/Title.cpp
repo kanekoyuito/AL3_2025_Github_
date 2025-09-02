@@ -12,6 +12,7 @@ Title::~Title() {
 	delete fade_;
 }
 
+
 void Title::Initialize() {
 
 	// 3Dモデルの生成
