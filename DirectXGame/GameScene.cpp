@@ -36,6 +36,7 @@ void GameScene::Initialize() {
 	// スプライトインスタンスの生成
 	model_ = Model::CreateFromOBJ("block", true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	
 
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
 
@@ -58,14 +59,14 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	camera_.Initialize();
 
-	// 自キャラにの生成
+	// 自キャラの生成
 	player_ = new Player();
 
 	// 　敵キャラの生成
 	/*enemy_ = new Enemy();*/
 	for (int32_t i = 0; i < 2; i++) {
 		Enemy* newEnemy = new Enemy();
-		enemyPosition = mapChipField_->GetMapChipPositionByIndex(6 + i, 18);
+		enemyPosition = mapChipField_->GetMapChipPositionByIndex(20 + i, 18); // 左enemy X距離
 		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
 
 		enemies_.push_back(newEnemy);
@@ -119,6 +120,7 @@ void GameScene::Update() {
 			//
 			deathParticles_->Initialize(modelParticles_, &camera_, deathParticlesPosition);
 		}
+
 		break;
 	case GameScene::Phase::kDeath:
 
@@ -187,7 +189,7 @@ void GameScene::Update() {
 		deathParticles_->Update();
 	}
 	/*if (deathParticles_ && deathParticles_->IsFinished()) {
-		finished_ = true;
+	    finished_ = true;
 	}*/
 }
 
@@ -201,21 +203,28 @@ void GameScene::Draw() {
 
 	// ここに描画処理
 
-	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockline : worldTransformBlocks_) {
-		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockline) {
-			if (!worldTransformBlock) {
-				continue;
-			}
-			model_->Draw(*worldTransformBlock, camera_);
-		}
-	}
 	// プレイヤーの表示kPlayの時表示
 	if (phase_ == Phase::kPlay) {
 		// 自キャラの描画
 		player_->Draw();
+		// 背景の描画
+		skydome_->Draw();
+
+		for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockline : worldTransformBlocks_) {
+			for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockline) {
+				if (!worldTransformBlock) {
+					continue;
+				}
+				model_->Draw(*worldTransformBlock, camera_);
+			}
+		}
 	}
-	// 背景の描画
-	skydome_->Draw();
+	if (phase_ == Phase::negaKPlay) {
+		// ネガplayerの描画
+		player_->Draw();
+		// ネガ背景の描画
+
+	}
 	// 敵の描画
 	/*enemy_->Draw();*/
 
@@ -281,6 +290,9 @@ void GameScene::ChangePhase() {
 
 	switch (phase_) {
 	case GameScene::Phase::kPlay:
+		if (Input::GetInstance()->PushKey(DIK_2)) {
+			phase_ = Phase::negaKPlay;
+		}
 		// ゲームプレイフェーズの処理
 		if (player_->IsDead()) {
 			// 死亡演出フェーズに切り替え
@@ -293,6 +305,13 @@ void GameScene::ChangePhase() {
 			deathParticles_->Initialize(modelParticles_, &camera_, deathParticlesPosition);
 		}
 		break;
+	case GameScene::Phase::negaKPlay:
+
+		if (Input::GetInstance()->PushKey(DIK_1)) {
+			phase_ = Phase::kPlay;
+		}
+		break;
+
 	case GameScene::Phase::kDeath:
 		// デス演出フェーズの処理
 		if (deathParticles_ && deathParticles_->IsFinished()) {
