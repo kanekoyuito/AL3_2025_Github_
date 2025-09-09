@@ -18,6 +18,7 @@ void Title::Initialize() {
 	// 3Dモデルの生成
 	model_ = Model::CreateFromOBJ("titleFont");
 	modelPlayer_ = Model::CreateFromOBJ("player");
+	//modelTitle_ = Model::CreateFromOBJ("Title");
 
 	// カメラの初期化
 	camera_.Initialize();

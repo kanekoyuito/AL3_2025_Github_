@@ -1,5 +1,7 @@
 #pragma once
 #include "KamataEngine.h"
+#include "AABB.h"
+
 
 class Player;
 
@@ -14,9 +16,15 @@ public:
 
 	void OnCollision(const Player* player);
 
-	AABB GetAABB();
+	AABB GetAABB2();
 
 	KamataEngine::Vector3 GetWorldPosition();
+
+	   // --- 追加 ---
+	void TakeDamage(int damage); // ダメージを受ける
+	bool IsDead() const { return isDead_; }
+	void SetDead(bool dead) { isDead_ = dead; }
+
 
 private:
 	KamataEngine::Model* model_ = nullptr;
@@ -39,4 +47,8 @@ private:
 	static inline const float kWalkMotionTime = 0.2f;
 	// 経過時間
 	float walkTimer_ = 0.0f;
+
+	  // --- 追加 ---
+	int hp_ = 3; // HP（調整可能）
+	bool isDead_ = false;
 };

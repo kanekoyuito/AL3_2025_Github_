@@ -13,3 +13,11 @@ struct AABB {
 //衝突判定時
 bool IsCollision(const AABB& aabb1, const AABB& aabb2);
 
+inline KamataEngine::Vector3 operator*(const KamataEngine::Vector3& v, float s) { return {v.x * s, v.y * s, v.z * s}; }
+
+inline KamataEngine::Vector3& operator+=(KamataEngine::Vector3& lhs, const KamataEngine::Vector3& rhs) {
+	lhs.x += rhs.x;
+	lhs.y += rhs.y;
+	lhs.z += rhs.z;
+	return lhs;
+}

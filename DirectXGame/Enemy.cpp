@@ -26,7 +26,10 @@ void Enemy::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera,
 
 void Enemy::Update() {
 
-	worldTransform_.translation_ += velocity_;
+	worldTransform_.translation_.x += velocity_.x;
+	worldTransform_.translation_.y += velocity_.y;
+	worldTransform_.translation_.z += velocity_.z;
+
 
 	// タイマーを加算
 	walkTimer_ += 1.0f / 60.0f;
@@ -56,18 +59,23 @@ KamataEngine::Vector3 Enemy::GetWorldPosition() {
 
 	return worldPos;
 }
+AABB Enemy::GetAABB2() {
+	AABB box;
+	box.min.x = worldTransform_.translation_.x - kWidth / 2.0f;
+	box.min.y = worldTransform_.translation_.y - kHeight / 2.0f;
+	box.min.z = worldTransform_.translation_.z - kWidth / 2.0f;
+
+	box.max.x = worldTransform_.translation_.x + kWidth / 2.0f;
+	box.max.y = worldTransform_.translation_.y + kHeight / 2.0f;
+	box.max.z = worldTransform_.translation_.z + kWidth / 2.0f;
+
+	return box;
+}
 
 
-AABB Enemy::GetAABB() { 
-
-	KamataEngine::Vector3 worldPos = GetWorldPosition();
-
-	AABB aabb;
-
-	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
-	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
-
-	return aabb;
-
-
+void Enemy::TakeDamage(int damage) {
+	hp_ -= damage;
+	if (hp_ <= 0) {
+		isDead_ = true;
+	}
 }

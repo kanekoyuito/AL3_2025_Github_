@@ -4,6 +4,7 @@
 #define NOMINMAX
 #include "MapChipField.h"
 #include "algorithm"
+#include"MyMath.h"
 
 using namespace KamataEngine;
 
@@ -103,7 +104,10 @@ void Player::InputMove() {
 					turnTimer_ = kTimeTurn;
 				}
 			}
-			velocity_ += acceleration;
+			velocity_.x += acceleration.x;
+			velocity_.y += acceleration.y;
+			velocity_.z += acceleration.z;
+
 
 			velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
 
@@ -115,7 +119,10 @@ void Player::InputMove() {
 			onGround_ = false;
 		}
 	} else {
-		velocity_ += Vector3(0, -kGravityAcceleration, 0);
+		velocity_.x += 0.0f;
+		velocity_.y += -kGravityAcceleration;
+		velocity_.z += 0.0f;
+
 
 		velocity_.y = max(velocity_.y, -kLimitFallSpeed);
 	}
@@ -176,7 +183,11 @@ void Player::CheckMapCollisionUp(CollisionMapInfo& info) {
 	}
 }
 
-void Player::CheckMapMove(const CollisionMapInfo& info) { worldTransform_.translation_ += info.move; }
+void Player::CheckMapMove(const CollisionMapInfo& info) {
+	worldTransform_.translation_.x += info.move.x;
+	worldTransform_.translation_.y += info.move.y;
+	worldTransform_.translation_.z += info.move.z;
+}
 
 void Player::CheckMapCeiling(const CollisionMapInfo& info) {
 

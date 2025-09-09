@@ -37,7 +37,10 @@ void DeathParticles::Update() {
 
 		velocity = Transform(velocity, matriRotation);
 
-		worldTransform_[i].translation_ += velocity;
+		worldTransform_[i].translation_.x += velocity.x;
+		worldTransform_[i].translation_.y += velocity.y;
+		worldTransform_[i].translation_.z += velocity.z;
+
 	}
 	counter_ += 1.0f / 60.0f;
 

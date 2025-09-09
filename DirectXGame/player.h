@@ -8,13 +8,12 @@ class Enemy;
 
 class Player {
 public:
-
-		// 左右
+	// 左右
 	enum class LRDirection {
 		kRight,
 		kLeft,
 	};
-	
+
 	/*void Initialize(KamataEngine::Model* model,uint32_t textureHandle,KamataEngine::Camera* camera);*/
 	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, const KamataEngine::Vector3& position);
 
@@ -28,7 +27,7 @@ public:
 
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
-	
+
 	AABB GetAABB();
 
 	KamataEngine::Vector3 GetWorldPosition();
@@ -38,13 +37,16 @@ public:
 	// デスフラグのgetter
 	bool IsDead() const { return isDead_; }
 
+	float GetYaw() const { return yaw_; }
+	void SetYaw(float yaw) { yaw_ = yaw; }
+
 private:
 	// スプライト
 	KamataEngine::Model* model_ = nullptr;
 
 	KamataEngine::Camera* camera_ = nullptr;
 
-	//マップチップによるフィールド
+	// マップチップによるフィールド
 	MapChipField* mapChipField_ = nullptr;
 
 	KamataEngine::Vector3 velocity_ = {};
@@ -73,7 +75,7 @@ private:
 
 	static inline const float kJumpAcceleration = 1.0f;
 
-	//キャラクターの当たり判定サイズ
+	// キャラクターの当たり判定サイズ
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
 
@@ -87,15 +89,15 @@ private:
 	void InputMove();
 
 	void CheckMapCollision(CollisionMapInfo& info);
-	//衝突判定　上
+	// 衝突判定　上
 	void CheckMapCollisionUp(CollisionMapInfo& info);
-	//衝突判定　下
+	// 衝突判定　下
 	void CheckMapCollisionDown(CollisionMapInfo& info);
-	//衝突判定　右
+	// 衝突判定　右
 	void CheckMapCollisionRight(CollisionMapInfo& info);
-	//衝突判定　左
+	// 衝突判定　左
 	void CheckMapCollisionLeft(CollisionMapInfo& info);
-	
+
 	void CheckMapMove(const CollisionMapInfo& info);
 
 	void CheckMapCeiling(const CollisionMapInfo& info);
@@ -106,14 +108,14 @@ private:
 
 	void AnimateTurn();
 
-	//角
-	enum Corner { 
-		kRightBottom, 
-		kLeftBottom, 
+	// 角
+	enum Corner {
+		kRightBottom,
+		kLeftBottom,
 		kRightTop,
-		kLeftTop, 
-		
-		kNumCorner 
+		kLeftTop,
+
+		kNumCorner
 	};
 
 	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
@@ -127,5 +129,9 @@ private:
 	static inline const float kAttenuationWall = 0.5f;
 	// デスフラグ
 	bool isDead_ = false;
-	
+
+	KamataEngine::Vector3 position_;
+	float yaw_ = 0.0f; // Y軸回転角（ラジアン）
+	// 他のメンバ…
+
 };

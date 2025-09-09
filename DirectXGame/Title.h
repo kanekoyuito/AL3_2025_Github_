@@ -29,11 +29,14 @@ private:
 
 	KamataEngine::Model* model_ = nullptr;
 	KamataEngine::Model* modelPlayer_ = nullptr;
+	KamataEngine::Model* modelTitle_ = nullptr;
+
 	// カメラ
 	KamataEngine::Camera camera_;
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
 	KamataEngine::WorldTransform worldTransformPlayer_;
+	KamataEngine::WorldTransform worldTransformTitle_;
 	// 回転
 	float rotate = 0.0f;
 

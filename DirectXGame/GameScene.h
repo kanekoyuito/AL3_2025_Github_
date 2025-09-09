@@ -8,6 +8,7 @@
 #include"Enemy.h"
 #include"DeathParticles.h"
 #include "Fade.h"
+#include"Bullet.h"
 
 class GameScene {
 public:
@@ -46,6 +47,8 @@ public:
 
 	KamataEngine::Model* modelSkydome_ = nullptr;
 
+	KamataEngine::Model* modelBullet_ = nullptr;
+
 	/*KamataEngine::Model* modelNegadome_ = nullptr;*/
 
 	KamataEngine::Model* modelPlayer_ = nullptr;
@@ -60,11 +63,14 @@ public:
 
 	Player* player_ = nullptr;
 
+	Bullet* bullet_ = nullptr;
+
 	/*Enemy* enemy_ = nullptr;*/
 
 	skydome* skydome_ = nullptr;
 
-	
+	std::list<Bullet*> bullets_; // 弾リスト
+
 
 	CameraController* cameraController_ = nullptr; 
 	

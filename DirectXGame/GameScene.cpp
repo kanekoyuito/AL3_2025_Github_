@@ -1,8 +1,17 @@
 #include "GameScene.h"
 #include "MyMath.h"
 #include "player.h"
+#include <cstdlib> // rand, srand
+#include <ctime>   // time
 
 using namespace KamataEngine;
+
+KamataEngine::Vector3 Normalize(const KamataEngine::Vector3& v) {
+	float length = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+	if (length == 0.0f)
+		return {0, 0, 0};
+	return {v.x / length, v.y / length, v.z / length};
+}
 
 // デストラクタ(解放)
 GameScene::~GameScene() {
@@ -10,6 +19,7 @@ GameScene::~GameScene() {
 	delete player_;
 	delete modelEnemy_;
 	delete modelSkydome_;
+
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockline : worldTransformBlocks_) {
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockline) {
 			delete worldTransformBlock;
@@ -36,7 +46,8 @@ void GameScene::Initialize() {
 	// スプライトインスタンスの生成
 	model_ = Model::CreateFromOBJ("block", true);
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
-	
+	// 弾のobjを追加
+	modelBullet_ = Model::CreateFromOBJ("Bullet", true);
 
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
 
@@ -45,6 +56,9 @@ void GameScene::Initialize() {
 	debugCamera_ = new DebugCamera(1280, 720);
 
 	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+
+	// 初期化のどこかで乱数シードを設定
+	srand(static_cast<unsigned int>(time(nullptr)));
 
 	/*deathParticles_ = new DeathParticles;
 	deathParticles_->Initialize(modelParticles_, &camera_, playerPosition);*/
@@ -62,13 +76,29 @@ void GameScene::Initialize() {
 	// 自キャラの生成
 	player_ = new Player();
 
+	// 弾の生成
+	bullet_ = new Bullet();
+
 	// 　敵キャラの生成
 	/*enemy_ = new Enemy();*/
-	for (int32_t i = 0; i < 2; i++) {
-		Enemy* newEnemy = new Enemy();
-		enemyPosition = mapChipField_->GetMapChipPositionByIndex(20 + i, 18); // 左enemy X距離
-		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
+	// for (int32_t i = 0; i < 3; i++) {
+	//	Enemy* newEnemy = new Enemy();
+	//	enemyPosition = mapChipField_->GetMapChipPositionByIndex(22 + i, i+9); // 左enemy X距離
+	//	newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
 
+	//	enemies_.push_back(newEnemy);
+	//}
+
+	for (int32_t i = 0; i < 3; i++) {
+		Enemy* newEnemy = new Enemy();
+
+		// ランダムなマップチップ座標を決定
+		int randX = rand() % 30; // マップ幅が30の場合（必要に応じて変更）
+		int randY = rand() % 20; // マップ高さが20の場合（必要に応じて変更）
+
+		enemyPosition = mapChipField_->GetMapChipPositionByIndex(randX, randY);
+
+		newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
 		enemies_.push_back(newEnemy);
 	}
 
@@ -106,6 +136,9 @@ void GameScene::Initialize() {
 
 // 更新処理
 void GameScene::Update() {
+
+	// 毎フレーム Update の最初で呼ぶ
+	Input::GetInstance()->Update();
 
 	switch (phase_) {
 	case GameScene::Phase::kPlay:
@@ -151,7 +184,58 @@ void GameScene::Update() {
 	player_->Update();
 	/*enemy_->Update();*/
 
+	// 初期化のどこかで乱数シードを設定
+	srand(static_cast<unsigned int>(time(nullptr)));
+
+	// 更新
+	for (auto it = bullets_.begin(); it != bullets_.end();) {
+		Bullet* bullet = *it;
+		bullet->Update(); // ← deltaTime なし
+		if (bullet->IsDead()) {
+			delete bullet;
+			it = bullets_.erase(it);
+		} else {
+			++it;
+		}
+	}
+	// プレイヤーの更新
+	player_->Update();
+
+	// スペースキーで弾を生成
+	if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+
+		// 1. 弾の初期位置 = プレイヤーの位置
+		KamataEngine::Vector3 bulletPos = player_->GetWorldPosition();
+
+		// 2. 弾の速度ベクトル = 右方向に固定
+		KamataEngine::Vector3 bulletVel = {2.0f, 0.0f, 0.0f}; // X方向に速度2
+
+		// 3. 弾を生成
+		Bullet* newBullet = new Bullet();
+		newBullet->Initialize(modelBullet_, &camera_, bulletPos, bulletVel);
+		bullets_.push_back(newBullet);
+	}
+
+	// 4. 弾の更新
+	for (auto it = bullets_.begin(); it != bullets_.end();) {
+		Bullet* bullet = *it;
+		bullet->Update(); // deltaTimeなし
+		if (bullet->IsDead()) {
+			delete bullet;
+			it = bullets_.erase(it);
+		} else {
+			++it;
+		}
+	}
+
+	// 5. 敵の更新
+	for (Enemy* enemy : enemies_) {
+		enemy->Update();
+	}
+
 	ChangePhase();
+
+
 
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine) {
@@ -203,6 +287,19 @@ void GameScene::Draw() {
 
 	// ここに描画処理
 
+	 // 弾の描画
+	for (Bullet* bullet : bullets_) {
+		bullet->Draw();
+	}
+
+	// プレイヤー描画
+	player_->Draw();
+
+	// 敵描画
+	for (Enemy* enemy : enemies_) {
+		enemy->Draw();
+	}
+
 	// プレイヤーの表示kPlayの時表示
 	if (phase_ == Phase::kPlay) {
 		// 自キャラの描画
@@ -223,7 +320,6 @@ void GameScene::Draw() {
 		// ネガplayerの描画
 		player_->Draw();
 		// ネガ背景の描画
-
 	}
 	// 敵の描画
 	/*enemy_->Draw();*/
@@ -274,7 +370,7 @@ void GameScene::CheckAllCollisions() {
 	// 自キャラと敵弾全ての当たり判定
 	for (Enemy* enemy : enemies_) {
 		// 敵弾の座標
-		aabb2 = enemy->GetAABB();
+		aabb2 = enemy->GetAABB2();
 
 		// AABB同士の交差判定
 		if (IsCollision(aabb1, aabb2)) {
